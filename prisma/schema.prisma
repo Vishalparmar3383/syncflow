@@ -1,0 +1,341 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model acd_academic_year {
+  academic_year_id   Int                 @id @default(autoincrement())
+  academic_year_code String              @unique @db.VarChar(10)
+  start_date         DateTime            @db.Date
+  end_date           DateTime            @db.Date
+  is_active          Boolean?            @default(false)
+  description        String?
+  created_at         DateTime?           @default(now()) @db.Timestamp(6)
+  updated_at         DateTime?           @default(now()) @db.Timestamp(6)
+  acd_project_group  acd_project_group[]
+  acd_student        acd_student[]
+}
+
+model acd_admin {
+  admin_id          Int                 @id @default(autoincrement())
+  user_id           Int                 @unique
+  admin_name        String              @db.VarChar(255)
+  phone             String?             @db.VarChar(20)
+  email             String?             @db.VarChar(255)
+  description       String?
+  created_at        DateTime?           @default(now()) @db.Timestamp(6)
+  updated_at        DateTime?           @default(now()) @db.Timestamp(6)
+  acd_user          acd_user            @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
+  acd_project_group acd_project_group[]
+}
+
+model acd_department {
+  department_id   Int           @id @default(autoincrement())
+  department_name String        @unique @db.VarChar(255)
+  department_code String?       @unique @db.VarChar(10)
+  description     String?
+  created_at      DateTime?     @default(now()) @db.Timestamp(6)
+  updated_at      DateTime?     @default(now()) @db.Timestamp(6)
+  acd_staff       acd_staff[]
+  acd_student     acd_student[]
+}
+
+model acd_project_document {
+  document_id       Int               @id @default(autoincrement())
+  project_group_id  Int
+  document_name     String            @db.VarChar(255)
+  document_type     document_type
+  document_path     String?           @db.VarChar(500)
+  file_size         BigInt?
+  uploaded_by       Int
+  uploaded_at       DateTime?         @default(now()) @db.Timestamp(6)
+  version           Int?              @default(1)
+  description       String?
+  created_at        DateTime?         @default(now()) @db.Timestamp(6)
+  updated_at        DateTime?         @default(now()) @db.Timestamp(6)
+  acd_project_group acd_project_group @relation(fields: [project_group_id], references: [project_group_id], onDelete: Cascade, onUpdate: NoAction)
+  acd_user          acd_user          @relation(fields: [uploaded_by], references: [user_id], onUpdate: NoAction)
+
+  @@index([document_type], map: "idx_acd_project_document_document_type")
+  @@index([project_group_id], map: "idx_acd_project_document_project_group_id")
+  @@index([uploaded_by], map: "idx_acd_project_document_uploaded_by")
+}
+
+model acd_project_evaluation {
+  evaluation_id                 Int                             @id @default(autoincrement())
+  project_group_id              Int
+  evaluator_staff_id            Int
+  evaluation_date               DateTime?                       @db.Timestamp(6)
+  total_marks                   Decimal?                        @db.Decimal(5, 2)
+  awarded_progress              Decimal?                        @db.Decimal(5, 2)
+  remarks                       String?
+  evaluation_status             evaluation_status?              @default(Pending)
+  description                   String?
+  created_at                    DateTime?                       @default(now()) @db.Timestamp(6)
+  updated_at                    DateTime?                       @default(now()) @db.Timestamp(6)
+  acd_staff                     acd_staff                       @relation(fields: [evaluator_staff_id], references: [staff_id], onUpdate: NoAction)
+  acd_project_group             acd_project_group               @relation(fields: [project_group_id], references: [project_group_id], onDelete: Cascade, onUpdate: NoAction)
+  acd_project_evaluation_detail acd_project_evaluation_detail[]
+
+  @@index([evaluation_status], map: "idx_acd_project_evaluation_evaluation_status")
+  @@index([evaluator_staff_id], map: "idx_acd_project_evaluation_evaluator_staff_id")
+  @@index([project_group_id], map: "idx_acd_project_evaluation_project_group_id")
+}
+
+model acd_project_evaluation_detail {
+  evaluation_detail_id   Int                    @id @default(autoincrement())
+  evaluation_id          Int
+  criteria_name          String                 @db.VarChar(255)
+  marks_obtained         Decimal?               @db.Decimal(5, 2)
+  max_marks              Decimal?               @db.Decimal(5, 2)
+  weightage              Decimal?               @db.Decimal(3, 2)
+  description            String?
+  created_at             DateTime?              @default(now()) @db.Timestamp(6)
+  acd_project_evaluation acd_project_evaluation @relation(fields: [evaluation_id], references: [evaluation_id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model acd_project_group {
+  project_group_id                                         Int                        @id @default(autoincrement())
+  project_group_name                                       String                     @db.VarChar(255)
+  project_type_id                                          Int
+  project_title                                            String                     @db.VarChar(255)
+  project_area                                             String?                    @db.VarChar(255)
+  project_description                                      String?
+  average_cpi                                              Decimal?                   @db.Decimal(3, 2)
+  guide_staff_id                                           Int
+  convener_staff_id                                        Int?
+  expert_staff_id                                          Int?
+  group_status                                             group_status?              @default(Active)
+  approval_status                                          approval_status?           @default(Pending)
+  approved_by                                              Int?
+  approved_at                                              DateTime?                  @db.Timestamp(6)
+  academic_year_id                                         Int
+  description                                              String?
+  created_at                                               DateTime?                  @default(now()) @db.Timestamp(6)
+  updated_at                                               DateTime?                  @default(now()) @db.Timestamp(6)
+  progress_percentage                                      Decimal?                   @default(0) @db.Decimal(5, 2)
+  acd_project_document                                     acd_project_document[]
+  acd_project_evaluation                                   acd_project_evaluation[]
+  acd_academic_year                                        acd_academic_year          @relation(fields: [academic_year_id], references: [academic_year_id], onUpdate: NoAction)
+  acd_admin                                                acd_admin?                 @relation(fields: [approved_by], references: [admin_id], onUpdate: NoAction)
+  acd_staff_acd_project_group_convener_staff_idToacd_staff acd_staff?                 @relation("acd_project_group_convener_staff_idToacd_staff", fields: [convener_staff_id], references: [staff_id], onUpdate: NoAction)
+  acd_staff_acd_project_group_expert_staff_idToacd_staff   acd_staff?                 @relation("acd_project_group_expert_staff_idToacd_staff", fields: [expert_staff_id], references: [staff_id], onUpdate: NoAction)
+  acd_staff_acd_project_group_guide_staff_idToacd_staff    acd_staff                  @relation("acd_project_group_guide_staff_idToacd_staff", fields: [guide_staff_id], references: [staff_id], onUpdate: NoAction)
+  acd_project_type                                         acd_project_type           @relation(fields: [project_type_id], references: [project_type_id], onUpdate: NoAction)
+  acd_project_group_member                                 acd_project_group_member[]
+  acd_project_meeting                                      acd_project_meeting[]
+
+  @@index([academic_year_id], map: "idx_acd_project_group_academic_year_id")
+  @@index([approval_status], map: "idx_acd_project_group_approval_status")
+  @@index([group_status], map: "idx_acd_project_group_group_status")
+  @@index([guide_staff_id], map: "idx_acd_project_group_guide_staff_id")
+  @@index([project_type_id], map: "idx_acd_project_group_project_type_id")
+}
+
+model acd_project_group_member {
+  project_group_member_id Int               @id @default(autoincrement())
+  project_group_id        Int
+  student_id              Int
+  is_group_leader         Boolean?          @default(false)
+  student_cgpa            Decimal?          @db.Decimal(3, 2)
+  description             String?
+  created_at              DateTime?         @default(now()) @db.Timestamp(6)
+  updated_at              DateTime?         @default(now()) @db.Timestamp(6)
+  acd_project_group       acd_project_group @relation(fields: [project_group_id], references: [project_group_id], onDelete: Cascade, onUpdate: NoAction)
+  acd_student             acd_student       @relation(fields: [student_id], references: [student_id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([project_group_id, student_id])
+  @@index([is_group_leader], map: "idx_acd_project_group_member_is_group_leader")
+  @@index([project_group_id], map: "idx_acd_project_group_member_project_group_id")
+  @@index([student_id], map: "idx_acd_project_group_member_student_id")
+}
+
+model acd_project_meeting {
+  project_meeting_id             Int                              @id @default(autoincrement())
+  project_group_id               Int
+  guide_staff_id                 Int
+  meeting_date_time              DateTime                         @db.Timestamp(6)
+  meeting_purpose                String?                          @db.VarChar(255)
+  meeting_location               String?                          @db.VarChar(255)
+  meeting_notes                  String?
+  meeting_status                 meeting_status?                  @default(Scheduled)
+  meeting_status_description     String?
+  meeting_status_date_time       DateTime?                        @db.Timestamp(6)
+  description                    String?
+  created_at                     DateTime?                        @default(now()) @db.Timestamp(6)
+  updated_at                     DateTime?                        @default(now()) @db.Timestamp(6)
+  acd_staff                      acd_staff                        @relation(fields: [guide_staff_id], references: [staff_id], onUpdate: NoAction)
+  acd_project_group              acd_project_group                @relation(fields: [project_group_id], references: [project_group_id], onDelete: Cascade, onUpdate: NoAction)
+  acd_project_meeting_attendance acd_project_meeting_attendance[]
+
+  @@index([meeting_date_time], map: "idx_acd_project_meeting_date_time")
+  @@index([guide_staff_id], map: "idx_acd_project_meeting_guide_staff_id")
+  @@index([meeting_status], map: "idx_acd_project_meeting_meeting_status")
+  @@index([project_group_id], map: "idx_acd_project_meeting_project_group_id")
+}
+
+model acd_project_meeting_attendance {
+  project_meeting_attendance_id Int                 @id @default(autoincrement())
+  project_meeting_id            Int
+  student_id                    Int
+  is_present                    Boolean?            @default(false)
+  attendance_remark             attendance_remark?
+  description                   String?
+  created_at                    DateTime?           @default(now()) @db.Timestamp(6)
+  updated_at                    DateTime?           @default(now()) @db.Timestamp(6)
+  acd_project_meeting           acd_project_meeting @relation(fields: [project_meeting_id], references: [project_meeting_id], onDelete: Cascade, onUpdate: NoAction)
+  acd_student                   acd_student         @relation(fields: [student_id], references: [student_id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([project_meeting_id, student_id], map: "acd_project_meeting_attendanc_project_meeting_id_student_id_key")
+  @@index([is_present], map: "idx_acd_project_meeting_attendance_is_present")
+  @@index([project_meeting_id], map: "idx_acd_project_meeting_attendance_project_meeting_id")
+  @@index([student_id], map: "idx_acd_project_meeting_attendance_student_id")
+}
+
+model acd_project_type {
+  project_type_id   Int                 @id @default(autoincrement())
+  project_type_name String              @unique @db.VarChar(100)
+  description       String?
+  created_at        DateTime?           @default(now()) @db.Timestamp(6)
+  updated_at        DateTime?           @default(now()) @db.Timestamp(6)
+  acd_project_group acd_project_group[]
+}
+
+model acd_staff {
+  staff_id                                                         Int                      @id @default(autoincrement())
+  user_id                                                          Int                      @unique
+  staff_name                                                       String                   @db.VarChar(255)
+  phone                                                            String?                  @db.VarChar(20)
+  email                                                            String                   @unique @db.VarChar(255)
+  department_id                                                    Int?
+  designation                                                      String?                  @db.VarChar(100)
+  description                                                      String?
+  created_at                                                       DateTime?                @default(now()) @db.Timestamp(6)
+  updated_at                                                       DateTime?                @default(now()) @db.Timestamp(6)
+  acd_project_evaluation                                           acd_project_evaluation[]
+  acd_project_group_acd_project_group_convener_staff_idToacd_staff acd_project_group[]      @relation("acd_project_group_convener_staff_idToacd_staff")
+  acd_project_group_acd_project_group_expert_staff_idToacd_staff   acd_project_group[]      @relation("acd_project_group_expert_staff_idToacd_staff")
+  acd_project_group_acd_project_group_guide_staff_idToacd_staff    acd_project_group[]      @relation("acd_project_group_guide_staff_idToacd_staff")
+  acd_project_meeting                                              acd_project_meeting[]
+  acd_department                                                   acd_department?          @relation(fields: [department_id], references: [department_id], onUpdate: NoAction)
+  acd_user                                                         acd_user                 @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([department_id], map: "idx_acd_staff_department_id")
+  @@index([email], map: "idx_acd_staff_email")
+  @@index([user_id], map: "idx_acd_staff_user_id")
+}
+
+model acd_student {
+  student_id                     Int                              @id @default(autoincrement())
+  user_id                        Int                              @unique
+  student_name                   String                           @db.VarChar(255)
+  phone                          String?                          @db.VarChar(20)
+  email                          String                           @unique @db.VarChar(255)
+  enrollment_number              String                           @unique @db.VarChar(50)
+  department_id                  Int
+  academic_year_id               Int
+  cgpa                           Decimal?                         @default(0) @db.Decimal(3, 2)
+  description                    String?
+  created_at                     DateTime?                        @default(now()) @db.Timestamp(6)
+  updated_at                     DateTime?                        @default(now()) @db.Timestamp(6)
+  acd_project_group_member       acd_project_group_member[]
+  acd_project_meeting_attendance acd_project_meeting_attendance[]
+  acd_academic_year              acd_academic_year                @relation(fields: [academic_year_id], references: [academic_year_id], onUpdate: NoAction)
+  acd_department                 acd_department                   @relation(fields: [department_id], references: [department_id], onUpdate: NoAction)
+  acd_user                       acd_user                         @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([academic_year_id], map: "idx_acd_student_academic_year_id")
+  @@index([department_id], map: "idx_acd_student_department_id")
+  @@index([email], map: "idx_acd_student_email")
+  @@index([enrollment_number], map: "idx_acd_student_enrollment_number")
+  @@index([user_id], map: "idx_acd_student_user_id")
+}
+
+model acd_user {
+  user_id              Int                    @id @default(autoincrement())
+  email                String                 @unique @db.VarChar(255)
+  password_hash        String                 @db.VarChar(500)
+  role                 user_role
+  is_active            Boolean?               @default(true)
+  last_login_at        DateTime?              @db.Timestamp(6)
+  created_at           DateTime?              @default(now()) @db.Timestamp(6)
+  updated_at           DateTime?              @default(now()) @db.Timestamp(6)
+  acd_admin            acd_admin?
+  acd_project_document acd_project_document[]
+  acd_staff            acd_staff?
+  acd_student          acd_student?
+  acd_user_settings    acd_user_settings?
+
+  @@index([email], map: "idx_acd_user_email")
+  @@index([is_active], map: "idx_acd_user_is_active")
+  @@index([role], map: "idx_acd_user_role")
+}
+
+model acd_user_settings {
+  user_settings_id      Int       @id @default(autoincrement())
+  user_id               Int       @unique
+  theme                 app_theme @default(Dark)
+  desktop_notifications Boolean?  @default(true)
+  meeting_reminders     Boolean?  @default(true)
+  compact_sidebar       Boolean?  @default(false)
+  created_at            DateTime? @default(now()) @db.Timestamp(6)
+  updated_at            DateTime? @default(now()) @db.Timestamp(6)
+  acd_user              acd_user  @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([user_id], map: "idx_acd_user_settings_user_id")
+}
+
+enum approval_status {
+  Pending
+  Approved
+  Rejected
+}
+
+enum attendance_remark {
+  Present
+  Absent
+  Late
+  On_Leave
+  Excused
+}
+
+enum document_type {
+  Proposal
+  Report
+  Code
+  Presentation
+  Other
+}
+
+enum evaluation_status {
+  Pending
+  Completed
+  Graded
+}
+
+enum group_status {
+  Active
+  Completed
+  Suspended
+}
+
+enum meeting_status {
+  Scheduled
+  Completed
+  Cancelled
+  Rescheduled
+}
+
+enum app_theme {
+  Light
+  Dark
+}
+
+enum user_role {
+  Admin
+  Faculty
+  Student
+}
