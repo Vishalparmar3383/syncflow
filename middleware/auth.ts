@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyToken } from '@/lib/auth-utils'
 
-const protectedRoutes = ['/dashboard', '/api/admin', '/api/student', '/api/staff', '/api/groups', '/api/projects', '/api/meetings']
+const protectedRoutes = ['/dashboard', '/admin', '/faculty', '/student', '/api/admin', '/api/student', '/api/staff', '/api/groups', '/api/projects', '/api/meetings']
 
 export async function authMiddleware(request: NextRequest) {
     const { pathname } = request.nextUrl

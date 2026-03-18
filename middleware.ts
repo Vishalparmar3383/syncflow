@@ -4,7 +4,7 @@ import { authMiddleware } from './middleware/auth'
 import { rbacMiddleware } from './middleware/rbac'
 import { JWTPayload } from 'jose'
 
-export async function proxy(request: NextRequest) {
+export async function middleware(request: NextRequest) {
     // 1. Auth Check
     const authResult = await authMiddleware(request)
 
@@ -32,8 +32,6 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
     matcher: [
-        '/:path*',
-        '/api/:path*',
+        '/((?!api/auth|_next/static|_next/image|favicon.ico|login|register|public|about|contact|unauthorized).*)',
     ],
 }
-
