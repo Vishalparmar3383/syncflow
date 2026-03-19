@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { getApiUrl } from "@/lib/api"
 
 type UserRole = "Faculty" | "Student"
 
@@ -89,8 +90,8 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"div">)
     const fetchData = async () => {
       try {
         const [departmentResponse, academicYearResponse] = await Promise.all([
-          fetch("/api/master/departments"),
-          fetch("/api/master/academic-years"),
+          fetch(getApiUrl("/api/master/departments")),
+          fetch(getApiUrl("/api/master/academic-years")),
         ])
 
         if (departmentResponse.ok) {
@@ -162,7 +163,7 @@ export function SignupForm({ className, ...props }: React.ComponentProps<"div">)
           }
 
     try {
-      const response = await fetch(endpoint, {
+      const response = await fetch(getApiUrl(endpoint), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

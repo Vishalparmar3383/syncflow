@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { getApiUrl } from "@/lib/api"
 
 const requestSchema = z.object({
   email: z.email("Enter a valid email address"),
@@ -57,7 +58,7 @@ export function ForgotPasswordForm({ className, ...props }: React.ComponentProps
     setIsLoading(true)
 
     try {
-      const response = await fetch("/api/auth/forgot-password/request", {
+      const response = await fetch(getApiUrl("/api/auth/forgot-password/request"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(parsed.data),
@@ -98,7 +99,7 @@ export function ForgotPasswordForm({ className, ...props }: React.ComponentProps
     setIsLoading(true)
 
     try {
-      const response = await fetch("/api/auth/forgot-password/verify", {
+      const response = await fetch(getApiUrl("/api/auth/forgot-password/verify"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(parsed.data),

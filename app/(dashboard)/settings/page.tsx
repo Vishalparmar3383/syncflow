@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Switch } from "@/components/ui/switch"
 import { useUser } from "@/hooks/use-user"
+import { getApiUrl } from "@/lib/api"
 
 interface SettingsState {
   theme: "Light" | "Dark"
@@ -39,7 +40,7 @@ export default function SettingsPage() {
     const loadSettings = async () => {
       setIsLoading(true)
       try {
-        const response = await fetch("/api/account/settings")
+        const response = await fetch(getApiUrl("/api/account/settings"))
         const data = await response.json()
 
         if (!response.ok) {
@@ -81,7 +82,7 @@ export default function SettingsPage() {
     setError(null)
 
     try {
-      const response = await fetch("/api/account/settings", {
+      const response = await fetch(getApiUrl("/api/account/settings"), {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(settings),
@@ -97,7 +98,7 @@ export default function SettingsPage() {
       
       // Refresh local settings state without re-triggering theme logic unnecessarily
       try {
-        const refreshResponse = await fetch("/api/account/settings")
+        const refreshResponse = await fetch(getApiUrl("/api/account/settings"))
         const refreshData = await refreshResponse.json()
         if (refreshResponse.ok) {
           setSettings(refreshData)

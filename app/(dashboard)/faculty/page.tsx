@@ -8,6 +8,7 @@ import { FacultyPageShell } from "@/components/faculty/faculty-page-shell"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { getApiUrl } from "@/lib/api"
 
 type FacultyDashboardData = {
   staff: {
@@ -42,7 +43,7 @@ export default function FacultyDashboardPage() {
   React.useEffect(() => {
     const fetchDashboard = async () => {
       try {
-        const response = await fetch("/api/faculty/dashboard")
+        const response = await fetch(getApiUrl("/api/faculty/dashboard"))
         const result = await response.json()
         setData(result)
       } catch (error) {

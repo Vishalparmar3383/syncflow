@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
+import { getApiUrl } from "@/lib/api"
 
 type Project = {
   project_group_id: number
@@ -43,7 +44,7 @@ export default function StudentEvaluationsPage() {
 
   const loadDashboard = React.useCallback(async () => {
     try {
-      const response = await fetch("/api/student/dashboard")
+      const response = await fetch(getApiUrl("/api/student/dashboard"))
       const result = await response.json()
       setData(result)
     } catch (error) {
@@ -62,7 +63,7 @@ export default function StudentEvaluationsPage() {
     setSubmittingFor(projectGroupId)
 
     try {
-      const response = await fetch("/api/student/evaluations/request", {
+      const response = await fetch(getApiUrl("/api/student/evaluations/request"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

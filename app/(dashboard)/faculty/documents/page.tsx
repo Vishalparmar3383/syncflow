@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
+import { getApiUrl } from "@/lib/api"
 
 type Group = {
   project_group_id: number
@@ -58,7 +59,7 @@ export default function FacultyDocumentsPage() {
   const [error, setError] = React.useState<string | null>(null)
 
   const fetchDocuments = React.useCallback(async (groupId: number) => {
-    const response = await fetch(`/api/projects/documents?group_id=${groupId}`)
+    const response = await fetch(getApiUrl(`/api/projects/documents?group_id=${groupId}`))
     const result = await response.json()
     setDocuments(Array.isArray(result) ? result : [])
   }, [])
@@ -66,7 +67,7 @@ export default function FacultyDocumentsPage() {
   React.useEffect(() => {
     const fetchData = async () => {
       try {
-        const groupsResponse = await fetch("/api/groups")
+        const groupsResponse = await fetch(getApiUrl("/api/groups"))
         const groupsResult = await groupsResponse.json()
         const nextGroups = Array.isArray(groupsResult) ? groupsResult : []
         setGroups(nextGroups)
@@ -119,7 +120,7 @@ export default function FacultyDocumentsPage() {
     setError(null)
     setSubmittingFor(selectedDocument.document_id)
     try {
-      const response = await fetch(`/api/projects/documents/${selectedDocument.document_id}`, {
+      const response = await fetch(getApiUrl(`/api/projects/documents/${selectedDocument.document_id}`), {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ decision, review_note: note }),
@@ -359,7 +360,7 @@ function DocumentListItem({
         </div>
         <div className="flex gap-2">
           <Button variant="outline" className="rounded-xl bg-background/70" asChild>
-            <a href={`/api/projects/documents/${document.document_id}/download`}>
+            <a href={getApiUrl(`/api/projects/documents/${document.document_id}/download`)}>
               <Download className="mr-2 h-4 w-4" />
               Download
             </a>

@@ -18,6 +18,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Textarea } from "@/components/ui/textarea"
+import { getApiUrl } from "@/lib/api"
 
 type Proposal = {
   project_group_id: number
@@ -53,7 +54,7 @@ export default function FacultyProposalsPage() {
 
   const fetchProposals = React.useCallback(async () => {
     try {
-      const response = await fetch("/api/faculty/proposals")
+      const response = await fetch(getApiUrl("/api/faculty/proposals"))
       const result = await response.json()
       setProposals(Array.isArray(result) ? result : [])
     } catch (fetchError) {
@@ -84,7 +85,7 @@ export default function FacultyProposalsPage() {
     setError(null)
 
     try {
-      const response = await fetch(`/api/faculty/proposals/${selectedProposal.project_group_id}`, {
+      const response = await fetch(getApiUrl(`/api/faculty/proposals/${selectedProposal.project_group_id}`), {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

@@ -15,6 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { getApiUrl } from "@/lib/api"
 
 type Group = {
   project_group_id: number
@@ -34,7 +35,7 @@ export default function FacultyGroupsPage() {
   React.useEffect(() => {
     const fetchGroups = async () => {
       try {
-        const response = await fetch("/api/groups")
+        const response = await fetch(getApiUrl("/api/groups"))
         const result = await response.json()
         setGroups(Array.isArray(result) ? result : [])
       } catch (error) {

@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
+import { getApiUrl } from "@/lib/api"
 
 type ProjectType = {
   project_type_id: number
@@ -70,9 +71,9 @@ export default function StudentProposalsPage() {
     const fetchMeta = async () => {
       try {
         const [typesResponse, facultyResponse, yearsResponse] = await Promise.all([
-          fetch("/api/master/project-types"),
-          fetch("/api/master/faculty"),
-          fetch("/api/master/academic-years"),
+          fetch(getApiUrl("/api/master/project-types")),
+          fetch(getApiUrl("/api/master/faculty")),
+          fetch(getApiUrl("/api/master/academic-years")),
         ])
 
         const [typesResult, facultyResult, yearsResult] = await Promise.all([
@@ -111,7 +112,7 @@ export default function StudentProposalsPage() {
     setSubmitting(true)
 
     try {
-      const response = await fetch("/api/groups", {
+      const response = await fetch(getApiUrl("/api/groups"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(parsed.data),

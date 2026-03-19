@@ -19,6 +19,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { getApiUrl } from "@/lib/api"
 
 type ProjectType = {
   project_type_id: number
@@ -44,7 +45,7 @@ export default function AdminProjectTypesPage() {
 
   const fetchTypes = React.useCallback(async () => {
     try {
-      const response = await fetch("/api/admin/project-types")
+      const response = await fetch(getApiUrl("/api/admin/project-types"))
       const data = await response.json()
       setTypes(Array.isArray(data) ? data : [])
     } catch (error) {
@@ -79,7 +80,7 @@ export default function AdminProjectTypesPage() {
     setSubmitting(true)
 
     try {
-      const response = await fetch("/api/admin/project-types", {
+      const response = await fetch(getApiUrl("/api/admin/project-types"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(parsed.data),

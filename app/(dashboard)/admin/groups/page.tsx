@@ -16,6 +16,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { cn } from "@/lib/utils"
+import { getApiUrl } from "@/lib/api"
 
 type ProjectGroup = {
   project_group_id: number
@@ -37,7 +38,7 @@ export default function AdminGroupsPage() {
   React.useEffect(() => {
     const fetchGroups = async () => {
       try {
-        const response = await fetch("/api/admin/groups")
+        const response = await fetch(getApiUrl("/api/admin/groups"))
         const data = await response.json()
         setGroups(Array.isArray(data) ? data : [])
       } catch (error) {

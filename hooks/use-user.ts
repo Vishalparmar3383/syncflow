@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
+import { getApiUrl } from "@/lib/api"
 
 export type UserRole = "Admin" | "Faculty" | "Student"
 
@@ -33,7 +34,7 @@ export function useUser() {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const response = await fetch("/api/auth/me", {
+                const response = await fetch(getApiUrl("/api/auth/me"), {
                     credentials: "include",
                 })
                 if (response.ok) {
@@ -75,7 +76,7 @@ export function useUser() {
 
     const logout = async () => {
         try {
-            await fetch("/api/auth/logout", { method: "POST", credentials: "include" })
+            await fetch(getApiUrl("/api/auth/logout"), { method: "POST", credentials: "include" })
             router.push("/login")
         } catch (error) {
             console.error("Logout failed:", error)

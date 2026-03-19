@@ -20,6 +20,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { useUser } from "@/hooks/use-user"
 import { ModeToggle } from "@/components/mode-toggle"
+import { getApiUrl } from "@/lib/api"
 
 export function DashboardHeader() {
   const pathname = usePathname()
@@ -53,7 +54,7 @@ export function DashboardHeader() {
   React.useEffect(() => {
     const loadHeaderSummary = async () => {
       try {
-        const response = await fetch("/api/header/summary")
+        const response = await fetch(getApiUrl("/api/header/summary"))
         const data = await response.json()
         if (response.ok) {
           setHeaderSummary({

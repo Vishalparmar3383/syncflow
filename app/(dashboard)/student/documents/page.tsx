@@ -18,6 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { getApiUrl } from "@/lib/api"
 
 type DashboardProject = {
   project_group_id: number
@@ -73,7 +74,7 @@ export default function StudentDocumentsPage() {
   })
 
   const fetchDocuments = React.useCallback(async (projectGroupId: number) => {
-    const response = await fetch(`/api/projects/documents?group_id=${projectGroupId}`)
+    const response = await fetch(getApiUrl(`/api/projects/documents?group_id=${projectGroupId}`))
     const result = await response.json()
     setDocuments(Array.isArray(result) ? result : [])
   }, [])
@@ -81,7 +82,7 @@ export default function StudentDocumentsPage() {
   React.useEffect(() => {
     const fetchInitial = async () => {
       try {
-        const dashboardResponse = await fetch("/api/student/dashboard")
+        const dashboardResponse = await fetch(getApiUrl("/api/student/dashboard"))
         const dashboard = (await dashboardResponse.json()) as DashboardData
         const nextProjects = dashboard.projects || []
         setProjects(nextProjects)
@@ -137,7 +138,7 @@ export default function StudentDocumentsPage() {
       payload.append("document_type", parsed.data.document_type)
       payload.append("description", parsed.data.description || "")
 
-      const response = await fetch("/api/projects/documents", {
+      const response = await fetch(getApiUrl("/api/projects/documents"), {
         method: "POST",
         body: payload,
       })

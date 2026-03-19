@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
+import { getApiUrl } from "@/lib/api"
 
 interface ProfileState {
   role: "Admin" | "Faculty" | "Student"
@@ -41,7 +42,7 @@ export default function ProfilePage() {
 
   useEffect(() => {
     const load = async () => {
-      const response = await fetch("/api/account/profile")
+      const response = await fetch(getApiUrl("/api/account/profile"))
       if (response.ok) {
         setProfile(await response.json())
       }
@@ -82,7 +83,7 @@ export default function ProfilePage() {
     setIsSaving(true)
     setMessage(null)
 
-    const response = await fetch("/api/account/profile", {
+    const response = await fetch(getApiUrl("/api/account/profile"), {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(parsed.data),

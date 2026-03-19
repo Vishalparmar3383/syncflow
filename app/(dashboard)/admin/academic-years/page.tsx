@@ -21,6 +21,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { cn } from "@/lib/utils"
+import { getApiUrl } from "@/lib/api"
 
 type AcademicYear = {
   academic_year_id: number
@@ -60,7 +61,7 @@ export default function AdminAcademicYearsPage() {
 
   const fetchYears = React.useCallback(async () => {
     try {
-      const response = await fetch("/api/admin/academic-years")
+      const response = await fetch(getApiUrl("/api/admin/academic-years"))
       const data = await response.json()
       setYears(Array.isArray(data) ? data : [])
     } catch (error) {
@@ -95,7 +96,7 @@ export default function AdminAcademicYearsPage() {
     setSubmitting(true)
 
     try {
-      const response = await fetch("/api/admin/academic-years", {
+      const response = await fetch(getApiUrl("/api/admin/academic-years"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(parsed.data),

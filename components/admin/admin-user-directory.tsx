@@ -17,6 +17,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { cn } from "@/lib/utils"
+import { getApiUrl } from "@/lib/api"
 
 type Role = "Faculty" | "Student"
 
@@ -56,7 +57,7 @@ export function AdminUserDirectory({
       setLoading(true)
 
       try {
-        const response = await fetch(`/api/admin/users?role=${role}`)
+        const response = await fetch(getApiUrl(`/api/admin/users?role=${role}`))
         const data = await response.json()
         setUsers(Array.isArray(data) ? data : [])
       } catch (error) {

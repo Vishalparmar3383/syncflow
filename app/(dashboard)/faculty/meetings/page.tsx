@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
+import { getApiUrl } from "@/lib/api"
 
 type MeetingAttendance = {
   project_meeting_attendance_id: number
@@ -90,8 +91,8 @@ export default function FacultyMeetingsPage() {
   const loadData = React.useCallback(async () => {
     try {
       const [meetingsResponse, groupsResponse] = await Promise.all([
-        fetch("/api/faculty/meetings"),
-        fetch("/api/groups"),
+        fetch(getApiUrl("/api/faculty/meetings")),
+        fetch(getApiUrl("/api/groups")),
       ])
 
       const [meetingsResult, groupsResult] = await Promise.all([
@@ -158,7 +159,7 @@ export default function FacultyMeetingsPage() {
     setSubmitting(true)
 
     try {
-      const response = await fetch("/api/faculty/meetings", {
+      const response = await fetch(getApiUrl("/api/faculty/meetings"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(parsed.data),
@@ -205,7 +206,7 @@ export default function FacultyMeetingsPage() {
     setApiError(null)
 
     try {
-      const response = await fetch("/api/faculty/meetings", {
+      const response = await fetch(getApiUrl("/api/faculty/meetings"), {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

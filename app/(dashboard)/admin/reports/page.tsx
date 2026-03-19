@@ -14,6 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { getApiUrl } from "@/lib/api"
 
 type ReportSummary = {
   summary?: {
@@ -42,8 +43,8 @@ export default function AdminReportsPage() {
     const fetchReports = async () => {
       try {
         const [summaryResponse, projectsResponse] = await Promise.all([
-          fetch("/api/reports/dashboard"),
-          fetch("/api/reports/projects"),
+          fetch(getApiUrl("/api/reports/dashboard")),
+          fetch(getApiUrl("/api/reports/projects")),
         ])
 
         const [summaryData, projectsData] = await Promise.all([

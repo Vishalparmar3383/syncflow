@@ -7,6 +7,7 @@ import { StudentPageShell } from "@/components/student/student-page-shell"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
+import { getApiUrl } from "@/lib/api"
 
 type Member = {
   project_group_member_id: number
@@ -59,7 +60,7 @@ export default function StudentGroupPage() {
   React.useEffect(() => {
     const fetchDashboard = async () => {
       try {
-        const response = await fetch("/api/student/dashboard")
+        const response = await fetch(getApiUrl("/api/student/dashboard"))
         const result = await response.json()
         setData(result)
       } catch (error) {

@@ -28,6 +28,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Textarea } from "@/components/ui/textarea"
+import { getApiUrl } from "@/lib/api"
 
 type Department = {
   department_id: number
@@ -57,7 +58,7 @@ export default function AdminDepartmentsPage() {
 
   const fetchDepartments = React.useCallback(async () => {
     try {
-      const response = await fetch("/api/admin/departments")
+      const response = await fetch(getApiUrl("/api/admin/departments"))
       const data = await response.json()
       setDepartments(Array.isArray(data) ? data : [])
     } catch (error) {
@@ -103,7 +104,7 @@ export default function AdminDepartmentsPage() {
     setSubmitting(true)
 
     try {
-      const response = await fetch("/api/admin/departments", {
+      const response = await fetch(getApiUrl("/api/admin/departments"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

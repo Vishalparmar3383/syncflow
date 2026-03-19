@@ -20,6 +20,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
+import { getApiUrl } from "@/lib/api"
 
 type RecentUser = {
   user_id: number
@@ -91,7 +92,7 @@ export default function AdminDashboard() {
   React.useEffect(() => {
     const fetchDashboard = async () => {
       try {
-        const response = await fetch("/api/admin/dashboard")
+        const response = await fetch(getApiUrl("/api/admin/dashboard"))
         const result = await response.json()
         setData(result)
       } catch (error) {

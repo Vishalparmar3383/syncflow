@@ -21,6 +21,7 @@ import { Progress } from "@/components/ui/progress"
 import { Slider } from "@/components/ui/slider"
 import { Textarea } from "@/components/ui/textarea"
 import { calculateRubricAverage, EVALUATION_RUBRIC } from "@/lib/evaluation-rubric"
+import { getApiUrl } from "@/lib/api"
 
 type Evaluation = {
   evaluation_id: number
@@ -54,7 +55,7 @@ export default function FacultyEvaluationsPage() {
 
   const loadData = React.useCallback(async () => {
     try {
-      const response = await fetch("/api/faculty/evaluations")
+      const response = await fetch(getApiUrl("/api/faculty/evaluations"))
       const result = await response.json()
       setEvaluations(Array.isArray(result) ? result : [])
     } catch (error) {
@@ -137,7 +138,7 @@ export default function FacultyEvaluationsPage() {
     setSubmitting(true)
 
     try {
-      const response = await fetch("/api/faculty/evaluations", {
+      const response = await fetch(getApiUrl("/api/faculty/evaluations"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

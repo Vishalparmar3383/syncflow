@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { getApiUrl } from "@/lib/api"
 
 type Meeting = {
   project_meeting_id: number
@@ -28,7 +29,7 @@ export default function StudentMeetingsPage() {
   React.useEffect(() => {
     const fetchMeetings = async () => {
       try {
-        const response = await fetch("/api/student/meetings")
+        const response = await fetch(getApiUrl("/api/student/meetings"))
         const result = await response.json()
         setMeetings(Array.isArray(result) ? result : [])
       } catch (error) {

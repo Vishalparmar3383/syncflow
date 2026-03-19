@@ -14,6 +14,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { AlertCircle, Loader2, Lock, Eye, EyeOff, CheckCircle2, Mail } from "lucide-react"
+import { getApiUrl } from "@/lib/api"
 
 export function ChangePasswordForm({
   className,
@@ -37,7 +38,7 @@ export function ChangePasswordForm({
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await fetch("/api/auth/me")
+        const response = await fetch(getApiUrl("/api/auth/me"))
         if (response.ok) {
           setIsAuthenticated(true)
         }
@@ -104,7 +105,7 @@ export function ChangePasswordForm({
         payload.email = email
       }
 
-      const response = await fetch("/api/auth/change-password", {
+      const response = await fetch(getApiUrl("/api/auth/change-password"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
